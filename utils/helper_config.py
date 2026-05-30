@@ -1,9 +1,10 @@
 import os
 import yaml
-from pyspark.sql.functions import col
-from pyspark.sql.types import *
 
-def load_yaml_config(file_name: str, folder_path: str = "../config/tables"):
+def load_yaml_config(
+    file_path: str,
+) -> dict:
+    
     """
     Loads a specific YAML file from a folder and returns its contents as a dict.
     
@@ -15,12 +16,34 @@ def load_yaml_config(file_name: str, folder_path: str = "../config/tables"):
         dict: Parsed YAML configuration.
     """
 
-    config_path = os.path.join(folder_path, f"{file_name}.yaml")
+    config_path = os.path.join(file_path)
 
     if not os.path.exists(config_path):
-        raise FileNotFoundError(f"No such file: {config_path}")
+        raise FileNotFoundError(f"No such file: {file_path}")
 
     with open(config_path, "r") as f:
         config_data = yaml.safe_load(f)
 
     return config_data
+
+def list_all_files_in_directory(
+    directory: str
+) -> list:
+    
+    """
+    Lists all files in a directory
+
+    Args:
+        directory (str): Path to the directory
+
+    Returns:
+        List of file paths in the directory
+    """
+
+    all_files = []
+
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            all_files.append(os.path.join(root, file))
+
+    return all_files

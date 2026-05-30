@@ -1,66 +1,59 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Unity Catalog Table Creation: Dimensions & Facts
-# MAGIC _This notebook contains SQL scripts to create all required tables in the `*env*_gold` schema, including both dimension and fact tables._
+# MAGIC # Unity Catalog Table Creation
+# MAGIC This notebook contains SQL scripts to create all required tables in the `*env*_*layer*` schemas
 # MAGIC
 
 # COMMAND ----------
 
-# DBTITLE 1,Read function to find Wheel file location
-# MAGIC %run "../../03_utils/wheel_utilities/wheel_path_finder"
-
-# COMMAND ----------
-
-# DBTITLE 1,Find Wheel file location
-# Detect repo root (no matter where this notebook is)
-notebook_dir = Path(os.getcwd())
-repo_root = find_repo_root(notebook_dir, "transformation/dist")
-
-dist_dir = repo_root / "transformation" / "dist"
-
-# Find wheel files
-wheel_files = list(dist_dir.glob("*.whl"))
-latest_wheel = max(wheel_files, key=lambda f: f.stat().st_mtime)
-
-wheel_path = f"/Workspace{latest_wheel}"
-
-print(f"Installing latest wheel: {wheel_path}")
-%pip install --force-reinstall "$wheel_path"
-
-# COMMAND ----------
-
+# DBTITLE 1,Restart Python
 dbutils.library.restartPython()  
 
 # COMMAND ----------
 
+# DBTITLE 1,Import Modules
 import os
-from carbon.utils import helper_config as hc
+import utils.helper_config as hc
 
 # COMMAND ----------
 
-path_to_config = "../config/"
+# DBTITLE 1,Set Parameters
+dbutils.widgets.text("env", "")
+
+# COMMAND ----------
+
+# DBTITLE 1,Get parameters
+env = dbutils.widgets.get("env")
+
+# COMMAND ----------
+
+path_to_config = "../../config"
 path_to_config_tables = f"{path_to_config}/tables"
 
-catalog_prefix = 'prod_'  ##CHANGE TO proto_ IF RUNNING IN INFOLAB OR PROTO
-if catalog_prefix == 'infolab':
-    catalog = f"{catalog_prefix}"
-    schema = "c_carbon_emissions_h"
-else:       
-    catalog = f"{catalog_prefix}gold"
-    schema = "c_carbon_emissions_h"
+# COMMAND ----------
+
+# DBTITLE 1,Get All Config Source Files
+config_paths = hc.list_all_files_in_directory(path_to_config_tables)
 
 # COMMAND ----------
 
-configs = os.listdir(path_to_config_tables)
+# DBTITLE 1,Dynamic SQL to Create Table
+for cp in config_paths:
 
-for c in configs:
+    layer = cp.split('/')[-3]
+    catalog = f"{env}_{layer}"
+    data_asset = cp.split("/")[-2]
+    if layer == "silver":
+        schema = f"b_{data_asset}_h"
+    elif layer == "gold":
+        schema = f"c_{data_asset}_h"
+    table_name = cp.split("/")[-1].split(".")[0]
 
-    table_name = c.split(".")[0]
     print("-" * 100)
     print(f"Creating table for {table_name}\n")
 
     # Load in config
-    config_table = hc.load_yaml_config(file_name = table_name)["target"]
+    config_table = hc.load_yaml_config(file_path = cp)["target"]
 
     # Get table schema
     table_schema = config_table['table_schema']

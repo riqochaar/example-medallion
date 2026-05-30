@@ -2,9 +2,9 @@ description: "Contains Wind Turbine Power Generation Measurements"
 
 # Target
 target:
-  name: wind_turbine_power_output
-  catalog: gold
-  schema: c_renewable_energy_h
+  name: turbine
+  catalog: silver
+  schema: c_source_h
   mode: merge
   format: delta
   table_schema:
