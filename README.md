@@ -8,11 +8,12 @@ The code is structured as follows:
   - workflows: workflows that run the notebooks
 
 With more time, here's what I would focus on:
+
 - **Bronze table**: Convert the raw data straight into a table for a better view of the raw data.
 
 - **Detcting Missing Data**: Ensure there is a process to detect missing data in light of sensor malfunctions. You should understand the rolling average of rows per time period and flag any days that don't meet this average for checking.
 
-- **Data quality layer**: Surface a lightweight DQ report before the silver upsert - row counts in vs. out, null rates per column, share of rows dropped as outliers per turbine per run. This makes regressions visible without having to diff Delta history manually.
+- **Data quality layer**: Create lightweight DQ report before the silver upsert - row counts in vs. out, null rates per column, share of rows dropped as outliers per turbine per run. This makes regressions visible without having to query history manually
 
 - **Incremental gold**: The gold notebook currently reads the entire silver table on every run and recomputes all history. This really should be incremental based on a watermark column, e.g. `date` - only reprocessing dates that have new or updated silver records since the last gold run. This could be tracked via a Delta table's `_change_data_feed` or a simple metadata table.
 
