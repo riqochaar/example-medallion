@@ -16,11 +16,9 @@ env = dbutils.widgets.get("env")
 
 # DBTITLE 1,Define Config
 layer = "gold"
-source_system = "source"
+data_product = "data_product"
 entity = "fct_turbine"
-
-table_silver = f"{env}_silver.b_{source_system}_h.turbine_measurement"
-table_gold = f"{env}_{layer}.c_{source_system}_h.{entity}"
+table_gold = f"{env}_{layer}.c_{data_product}_h.{entity}"
 
 # COMMAND ----------
 
@@ -34,16 +32,25 @@ import utils.helper_config as hc
 
 # DBTITLE 1,Load Config
 path_to_config = "../../config/tables/"
-config = hc.load_yaml_config(file_path=f"{path_to_config}/{layer}/{source_system}/{entity}.yaml")
+config = hc.load_yaml_config(file_path=f"{path_to_config}/{layer}/{data_product}/{entity}.yaml")
+
+# Get target table information
 table_schema = config["target"]["table_schema"]
-primary_keys = [col for col in table_schema if "is_primary_key" in table_schema[col] and table_schema[col]["is_primary_key"] == True]
+primary_keys = [
+    col for col in table_schema 
+    if "is_primary_key" in table_schema[col] 
+    and table_schema[col]["is_primary_key"] == True
+]
+
+# Get source table information
+table_sources = config["sources"][0] # Get first table source as an example
+table_silver = f"{env}_{table_sources['catalog']}.{table_sources['schema']}.{table_sources['name']}"
 
 # COMMAND ----------
 
 # DBTITLE 1,Build Summary
 df_silver = spark.table(table_silver)
 
-# DBTITLE 1,Build Summary
 df_gold = spark.sql(f"""
     WITH summary AS (
         SELECT
@@ -73,6 +80,10 @@ df_gold = spark.sql(f"""
 
 # COMMAND ----------
 
+df_gold.display()
+
+# COMMAND ----------
+
 # DBTITLE 1,Merge into Gold
 merge_condition = " AND ".join([f"t.{pk} = s.{pk}" for pk in primary_keys])
 
@@ -87,4 +98,4 @@ merge_condition = " AND ".join([f"t.{pk} = s.{pk}" for pk in primary_keys])
 # COMMAND ----------
 
 # DBTITLE 1,Validate
-display(spark.table(table_silver).orderBy("date", "turbine_id"))
+display(spark.table(table_gold).orderBy("date", "turbine_id"))

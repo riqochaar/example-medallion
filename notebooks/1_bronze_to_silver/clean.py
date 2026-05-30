@@ -22,7 +22,9 @@ source_system = "source"
 entity = "turbine_measurement"
 table = f"{env}_{layer}.b_{source_system}_h.{entity}"
 
-bronze_path = f"{path_volume}/{entity}"
+# Define Paths
+# bronze_path = /Volumes/dev_bronze/r_source_h/source_general/turbine_measurement (need to create folder in volume)
+bronze_path = f"{path_volume}/{entity}" 
 schema_path = f"{path_volume}/{entity}/_schema"
 checkpoint_path = f"{path_volume}/{entity}/_checkpoint"
 
