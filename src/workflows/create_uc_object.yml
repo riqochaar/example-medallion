@@ -8,7 +8,7 @@ resources:
 
         - task_key: run_create_uc_object_task
           notebook_task:
-            notebook_path: /Workspace/Users/riqo@hotmail.co.uk/example-medallion/src/notebooks/main/0_create/create_uc_object.py
+            notebook_path: /Workspace/Users/riqo@hotmail.co.uk/example-medallion/src/notebooks/main/0_create/create_uc_object
             source: WORKSPACE
 
       queue:
