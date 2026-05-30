@@ -13,12 +13,12 @@ dbutils.library.restartPython()
 
 # DBTITLE 1,Import Modules
 import os
-import utils.helper_config as hc
+import src.notebooks.utils.helper_config as hc
 
 # COMMAND ----------
 
 # DBTITLE 1,Set Parameters
-dbutils.widgets.text("env", "")
+dbutils.widgets.text("env", "dev")
 
 # COMMAND ----------
 
@@ -27,7 +27,7 @@ env = dbutils.widgets.get("env")
 
 # COMMAND ----------
 
-path_to_config = "../../config"
+path_to_config = "../../../config"
 path_to_config_tables = f"{path_to_config}/tables"
 
 # COMMAND ----------

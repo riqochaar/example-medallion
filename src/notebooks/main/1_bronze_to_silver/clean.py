@@ -6,7 +6,7 @@
 # COMMAND ----------
 
 # DBTITLE 1,Set Parameters
-dbutils.widgets.text("env", "")
+dbutils.widgets.text("env", "dev")
 
 # COMMAND ----------
 
@@ -34,13 +34,13 @@ checkpoint_path = f"{path_volume}/{entity}/_checkpoint"
 from pyspark.sql import functions as F, Window
 from delta.tables import DeltaTable
 
-import utils.helper_config as hc
-import utils.helper_silver as hs
+import src.notebooks.utils.helper_config as hc
+import src.notebooks.utils.helper_silver as hs
 
 # COMMAND ----------
 
 # DBTITLE 1,Load Config
-path_to_config = "../../config/tables/"
+path_to_config = "../../../config/tables/"
 config = hc.load_yaml_config(file_path = f"{path_to_config}/{layer}/{source_system}/{entity}.yaml")
 table_schema = config["target"]["table_schema"]
 primary_keys = [col for col in table_schema if "is_primary_key" in table_schema[col] and table_schema[col]["is_primary_key"] == True]

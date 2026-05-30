@@ -5,7 +5,7 @@
 # COMMAND ----------
 
 # DBTITLE 1,Set Parameters
-dbutils.widgets.text("env", "")
+dbutils.widgets.text("env", "dev")
 
 # COMMAND ----------
 
@@ -26,12 +26,12 @@ table_gold = f"{env}_{layer}.c_{data_product}_h.{entity}"
 from pyspark.sql import functions as F
 from delta.tables import DeltaTable
 
-import utils.helper_config as hc
+import src.notebooks.utils.helper_config as hc
 
 # COMMAND ----------
 
 # DBTITLE 1,Load Config
-path_to_config = "../../config/tables/"
+path_to_config = "../../../config/tables/"
 config = hc.load_yaml_config(file_path=f"{path_to_config}/{layer}/{data_product}/{entity}.yaml")
 
 # Get target table information
@@ -77,10 +77,6 @@ df_gold = spark.sql(f"""
     FROM summary s
     JOIN daily_stats d ON s.date = d.date
 """)
-
-# COMMAND ----------
-
-df_gold.display()
 
 # COMMAND ----------
 
