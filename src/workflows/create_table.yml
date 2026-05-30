@@ -6,7 +6,7 @@ resources:
         Job to get create UC tables
       tasks:
 
-        - task_key: run_cr
+        - task_key: run_create_table_task
           notebook_task:
             notebook_path: /Workspace/Users/riqo@hotmail.co.uk/example-medallion/src/notebooks/main/0_create/create_table.py
             source: WORKSPACE
