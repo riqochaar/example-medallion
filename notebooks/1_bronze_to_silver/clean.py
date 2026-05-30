@@ -46,6 +46,7 @@ primary_keys = [col for col in table_schema if "is_primary_key" in table_schema[
 # COMMAND ----------
 
 # DBTITLE 1,Cleaning function
+# Some sample cleaning steps
 def clean(df):
 
     # 1. Apply schema and basic type conversions
@@ -57,7 +58,7 @@ def clean(df):
         pk_filter = pk_filter & F.col(pk).isNotNull()
     df = df.filter(pk_filter)
 
-    # 3. Remove outliers — drop readings outside 3 std devs from the per-turbine mean
+    # 3. Remove outliers - drop readings outside 3 std devs from the per-turbine mean
     cols_of_interest = ["wind_speed", "wind_direction", "power_output"]
     for col in cols_of_interest:
         stats = df.groupBy("turbine_id").agg(
