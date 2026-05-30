@@ -1,0 +1,16 @@
+resources:
+  jobs:
+    run_create_table:
+      name: run_create_table
+      description: |
+        Job to get create UC tables
+      tasks:
+
+        - task_key: run_cr
+          notebook_task:
+            notebook_path: /Workspace/Users/riqo@hotmail.co.uk/example-medallion/src/notebooks/main/0_create/create_uc_object.py
+            source: WORKSPACE
+
+      queue:
+        enabled: true
+      performance_target: STANDARD

@@ -5,24 +5,26 @@ resources:
       description: |
         Job to get data from bronze to gold for turbines
       parameters:
-        - name: environment
+        - name: env
           default: dev
 
       tasks:
 
         - task_key: run_bronze_to_silver
           notebook_task:
-            notebook_path: src\notebooks\main\1_source_to_bronze\clean.py
+            notebook_path: /Workspace/Users/riqo@hotmail.co.uk/example-medallion/src/notebooks/main/1_bronze_to_silver/clean
             source: WORKSPACE
             base_parameters:
-              environment: "{{job.parameters.environment}}"
+              env: "{{job.parameters.env}}"
 
         - task_key: run_silver_to_gold
+          depends_on:
+            - task_key: run_bronze_to_silver
           notebook_task:
-            notebook_path: src\notebooks\main\silver_to_gold\curate.py
+            notebook_path: /Workspace/Users/riqo@hotmail.co.uk/example-medallion/src/notebooks/main/2_silver_to_gold/curate
             source: WORKSPACE
             base_parameters:
-              environment: "{{job.parameters.environment}}"
+              env: "{{job.parameters.env}}"
               
       tags:
         Source System: source

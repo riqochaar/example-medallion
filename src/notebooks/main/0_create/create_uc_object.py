@@ -30,3 +30,8 @@
 # DBTITLE 1,Create Volumes
 # MAGIC %sql
 # MAGIC CREATE VOLUME IF NOT EXISTS dev_bronze.r_source_h.source_general;
+
+# COMMAND ----------
+
+# DBTITLE 1,Create Volume Directories
+# MAGIC %fs mkdirs /Volumes/dev_bronze/r_source_h/source_general/turbine_measurement

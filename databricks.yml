@@ -9,9 +9,9 @@ targets:
       jobs:
         run_populate:
           schedule:
-            quartz_cron_expression: "0 0 6 * * ?"  # daily at 6am
+            quartz_cron_expression: "0 0 6 * * ?"
             timezone_id: UTC
-            pause_status: PAUSED
+            pause_status: PAUSED                    # PAUSED in dev
 
   prod:
     workspace:
@@ -20,6 +20,6 @@ targets:
       jobs:
         run_populate:
           schedule:
-            quartz_cron_expression: "0 0 6 * * ?"  # daily at 6am
+            quartz_cron_expression: "0 0 6 * * ?"  # Daily at 6am
             timezone_id: UTC
-            pause_status: UNPAUSED
+            pause_status: UNPAUSED                 # UNPAUSED in prod to enable scheduled runs
