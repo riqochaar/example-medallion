@@ -1,0 +1,37 @@
+bundle:
+  name: wind_turbine_pipeline
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://<your-dev-workspace>.azuredatabricks.net
+
+  prod:
+    mode: production
+    workspace:
+      host: https://<your-prod-workspace>.azuredatabricks.net
+
+resources:
+  jobs:
+    wind_turbine_pipeline:
+      name: wind_turbine_pipeline
+      schedule:
+        quartz_cron_expression: "0 0 6 * * ?"  # daily at 6am
+        timezone_id: UTC
+        pause_status: ${if(${bundle.target} == "prod", "UNPAUSED", "PAUSED")}
+      tasks:
+        - task_key: silver
+          notebook_task:
+            notebook_path: ./src/notebooks/silver
+            base_parameters:
+              env: ${bundle.target}
+
+        - task_key: gold
+          depends_on:
+            - task_key: silver
+          notebook_task:
+            notebook_path: ./src/notebooks/gold
+            base_parameters:
+              env: ${bundle.target}
