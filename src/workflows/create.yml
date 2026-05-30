@@ -1,0 +1,16 @@
+resources:
+  jobs:
+    run_tfl:
+      name: run_create
+      description: |
+        Job to get create UC tables
+      tasks:
+
+        - task_key: run_create
+          notebook_task:
+            notebook_path: src\notebooks\main\0_create\create_table.py
+            source: WORKSPACE
+
+      queue:
+        enabled: true
+      performance_target: STANDARD

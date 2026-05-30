@@ -1,0 +1,31 @@
+resources:
+  jobs:
+    run_populate:
+      name: run_populate
+      description: |
+        Job to get data from bronze to gold for turbines
+      parameters:
+        - name: environment
+          default: dev
+
+      tasks:
+
+        - task_key: run_bronze_to_silver
+          notebook_task:
+            notebook_path: src\notebooks\main\1_source_to_bronze\clean.py
+            source: WORKSPACE
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+
+        - task_key: run_silver_to_gold
+          notebook_task:
+            notebook_path: src\notebooks\main\silver_to_gold\curate.py
+            source: WORKSPACE
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              
+      tags:
+        Source System: source
+      queue:
+        enabled: true
+      performance_target: STANDARD
