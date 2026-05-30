@@ -1,7 +1,9 @@
 # Databricks notebook source
+# DBTITLE 1,Set Parameters
+# MAGIC %md # Silver Layer
+# MAGIC Notebook to clean raw (bronze) data to silver
 
 # COMMAND ----------
-# MAGIC %md # Wind Turbine — Silver Layer (Cleaning)
 
 # DBTITLE 1,Set Parameters
 dbutils.widgets.text("env", "")
@@ -12,8 +14,8 @@ dbutils.widgets.text("env", "")
 env = dbutils.widgets.get("env")
 
 # COMMAND ----------
-# DBTITLE 1,Define Config
 
+# DBTITLE 1,Define Config
 path_volume = "/Volumes/dev_bronze/r_source_h/source_general"
 layer = "silver"
 source_system = "source"
@@ -25,8 +27,8 @@ schema_path = f"{path_volume}/{entity}/_schema"
 checkpoint_path = f"{path_volume}/{entity}/_checkpoint"
 
 # COMMAND ----------
-# DBTITLE 1,Import Modules
 
+# DBTITLE 1,Import Modules
 from pyspark.sql import functions as F, Window
 from delta.tables import DeltaTable
 
@@ -34,19 +36,16 @@ import utils.helper_config as hc
 import utils.helper_silver as hs
 
 # COMMAND ----------
-# DBTITLE 1,Load Config
 
+# DBTITLE 1,Load Config
 path_to_config = "../../config/tables/"
 config = hc.load_yaml_config(file_path = f"{path_to_config}/{layer}/{source_system}/{entity}.yaml")
 table_schema = config["target"]["table_schema"]
 primary_keys = [col for col in table_schema if "is_primary_key" in table_schema[col] and table_schema[col]["is_primary_key"] == True]
 
 # COMMAND ----------
-# MAGIC %md ## Cleaning logic
 
-# COMMAND ----------
 # DBTITLE 1,Cleaning function
-
 def clean(df):
 
     # 1. Apply schema and basic type conversions
@@ -85,10 +84,8 @@ def clean(df):
     return df
 
 # COMMAND ----------
-# MAGIC %md ## Auto Loader stream → Silver Delta table
 
-# COMMAND ----------
-
+# DBTITLE 1,Upsert to Silver Function
 def upsert_to_silver(batch_df, primary_keys):
 
     if batch_df.isEmpty():
@@ -108,6 +105,7 @@ def upsert_to_silver(batch_df, primary_keys):
 
 # COMMAND ----------
 
+# DBTITLE 1,Main Script
 (
     spark.readStream
         .format("cloudFiles")
@@ -124,8 +122,6 @@ def upsert_to_silver(batch_df, primary_keys):
 )
 
 # COMMAND ----------
-# MAGIC %md ## Quick check
 
-# COMMAND ----------
-
+# DBTITLE 1,Validate
 display(spark.table(table).orderBy(primary_keys))
