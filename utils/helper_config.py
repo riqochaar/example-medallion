@@ -47,3 +47,4 @@ def list_all_files_in_directory(
             all_files.append(os.path.join(root, file))
 
     return all_files
+    
