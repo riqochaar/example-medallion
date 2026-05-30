@@ -86,7 +86,7 @@ def clean(df):
 # COMMAND ----------
 
 # DBTITLE 1,Upsert to Silver Function
-def upsert_to_silver(batch_df, primary_keys):
+def upsert_to_silver(batch_df, batch_id):
 
     if batch_df.isEmpty():
         return
