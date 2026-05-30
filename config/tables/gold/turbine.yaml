@@ -1,0 +1,54 @@
+description: "Contains Daily Wind Turbine Performance Summary Statistics and Anomaly Detection Results"
+
+# Target
+target:
+  name: fact_wind_turbine_performance_daily
+  catalog: gold
+  schema: c_renewable_energy_h
+  mode: merge
+  format: delta
+  table_schema:
+    summary_date:
+      type: date
+      is_primary_key: true
+
+    turbine_id:
+      type: integer
+      is_primary_key: true
+
+    record_count:
+      type: integer
+
+    min_power_output_mw:
+      type: decimal(10,4)
+
+    max_power_output_mw:
+      type: decimal(10,4)
+
+    avg_power_output_mw:
+      type: decimal(10,4)
+
+    stddev_power_output_mw:
+      type: decimal(10,4)
+
+    anomaly_lower_threshold_mw:
+      type: decimal(10,4)
+
+    anomaly_upper_threshold_mw:
+      type: decimal(10,4)
+
+    anomaly_count:
+      type: integer
+
+    has_anomaly:
+      type: boolean
+
+    processing_timestamp:
+      type: timestamp
+
+# Sources
+sources:
+  - name: clean_wind_turbine_measurements
+    catalog: silver
+    schema: b_renewable_energy_h
+    format: delta

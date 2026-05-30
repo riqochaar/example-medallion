@@ -1,0 +1,22 @@
+description: "Contains Wind Turbine Power Generation Measurements"
+
+# Target
+target:
+  name: wind_turbine_power_output
+  catalog: gold
+  schema: c_renewable_energy_h
+  mode: merge
+  format: delta
+  table_schema:
+    timestamp:
+      type: timestamp
+      is_primary_key: true
+    turbine_id:
+      type: integer
+      is_primary_key: true
+    wind_speed:
+      type: decimal(5,2)
+    wind_direction:
+      type: integer
+    power_output:
+      type: decimal(5,2)
