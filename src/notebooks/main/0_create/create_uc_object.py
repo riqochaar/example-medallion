@@ -34,4 +34,4 @@
 # COMMAND ----------
 
 # DBTITLE 1,Create Volume Directories
-# MAGIC %fs mkdirs /Volumes/dev_bronze/r_source_h/source_general/turbine_measurement
+dbutils.fs.mkdirs("/Volumes/dev_bronze/r_source_h/source_general/turbine_measurement")
